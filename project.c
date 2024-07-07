@@ -9,18 +9,35 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 }
 
 /* instruction fetch */
+// HEX 21080001
+// 001000 01000010000000000000000001
+
+
+int c =0;
+
 /* 10 Points */
-int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
-{
+int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
+
+    if (PC % 2 != 0) {
+        return 1;//WORD NOT ALIGNED
+    }
+
+    int arrayIndex = PC >> 2; //Get index
+
+    *instruction = Mem[arrayIndex]; //Load instructions
+
+
+    return 0; //DONT HALT
+//0010000 1000010000000000000000001
 }
-
 
 /* instruction partition */
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
-
+    //111111 = 63
+    op *= (instruction & 0xFC000000) >> 26;
 }
 
 

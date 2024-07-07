@@ -1,12 +1,13 @@
 # Prerequisites
 *.d
-
+cmake-build-debug
 # Object files
 *.o
 *.ko
 *.obj
 *.elf
-
+.iml
+.idea/
 # Linker output
 *.ilk
 *.map
