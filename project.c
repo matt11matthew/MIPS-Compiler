@@ -38,7 +38,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
     //111111 = 63
-    op *= (instruction & 0xFC000000) >> 26;
+    *op = (instruction & 0xFC000000) >> 26;
 }
 
 
