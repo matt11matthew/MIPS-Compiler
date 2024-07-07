@@ -28,7 +28,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
     *instruction = Mem[arrayIndex]; //Load instructions
 
-
+  
     return 0; //DONT HALT
 //0010000 1000010000000000000000001
 }
