@@ -3,4 +3,4 @@ project(CDAProject)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(spimcore spimcore.c project.c)
+add_executable(spimcore spimcore.c project.c project_final.c)
