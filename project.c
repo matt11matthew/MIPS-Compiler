@@ -129,8 +129,19 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 	char RegWrite;
  */
 
+void printALU(   struct_controls *controls) {
+    printf("ALUOp: %d\n", controls->ALUOp);
+    printf("Jump: %d\n",controls->Jump);
+    printf("Branch: %d\n",controls->Branch);
+    printf("MemRead: %d\n",controls->MemRead);
+    printf("MemWrite: %d\n",controls->MemWrite);
+    printf("MemtoReg: %d\n",controls->MemtoReg);
+    printf("RegDst: %d\n",controls->RegDst);
+    printf("RegWrite: %d\n",controls->RegWrite);
+    printf("ALUSrc: %d\n",controls->ALUSrc);
+}
 int instruction_decode(unsigned op,struct_controls *controls) {
-    controls->ALUOp = op;
+    controls->ALUOp = 0;
     controls->Jump = 0;
     controls->Branch = 0;
     controls->MemRead = 0;
@@ -225,6 +236,7 @@ int instruction_decode(unsigned op,struct_controls *controls) {
     }
 
 
+    printALU(controls);
     return !used;
 
 
