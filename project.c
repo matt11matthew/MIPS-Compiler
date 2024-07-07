@@ -1,4 +1,26 @@
 #include "spimcore.h"
+// J-Type Instructions
+#define J 2        // Jump
+#define JAL 3      // Jump and link
+
+// I-Type Instructions
+#define SW 43      // Store word
+#define LW 35      // Load word
+#define BNE 5      // Branch if not equal
+#define BEQ 4      // Branch if equal
+#define ANDI 12    // AND immediate
+#define ADDI 8     // Add immediate
+
+#define SLTI 10    // Set on less than immediate
+#define ORI 13     // OR immediate
+
+//#define ALU_ADD = 0;
+//#define ALU_MINUS = 1;
+//#define ALU_NOT = 7;
+//#define ALU_SHIFT_LEFT_SIXTEEN = 6;
+//#define ALU_OR  = 5;
+//#define ALU_AND  = 4;
+
 
 
 /* ALU */
@@ -105,6 +127,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 	char ALUSrc;
 	char RegWrite;
  */
+
 int instruction_decode(unsigned op,struct_controls *controls) {
     controls->ALUOp = op;
     controls->Jump = 0;
@@ -118,10 +141,33 @@ int instruction_decode(unsigned op,struct_controls *controls) {
 
     controls->ALUSrc = 0;
 
+    if (op == ADDI || op == ANDI || op == ORI || op==LW || op == SW) {
+        controls->ALUSrc = 1;
+
+    }
+
     if (op==0) //TYPE R
         controls->RegDst = 1;
 
-    if (op)
+    if (op ==BEQ || op == BNE ) {
+        controls->Branch=1;
+    }
+    if (op == J||op==JAL) {
+         controls->Jump = 1;
+    }
+
+    if (op == LW) {
+        controls->MemRead = 1;
+        controls->MemtoReg = 1;
+    }
+
+    if (op==SW) {
+        controls->MemWrite = 1;
+    }
+
+
+
+
 
 //    if (op== 0) {
 //        //Type R
