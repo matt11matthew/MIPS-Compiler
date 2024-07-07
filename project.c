@@ -95,9 +95,49 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 
 /* instruction decode */
 /* 15 Points */
-int instruction_decode(unsigned op,struct_controls *controls)
-{
+/*	char RegDst;
+	char Jump;
+	char Branch;
+	char MemRead;
+	char MemtoReg;
+	char ALUOp;
+	char MemWrite;
+	char ALUSrc;
+	char RegWrite;
+ */
+int instruction_decode(unsigned op,struct_controls *controls) {
+    controls->ALUOp = op;
+    controls->Jump = 0;
+    controls->Branch = 0;
+    controls->MemRead = 0;
+    controls->MemWrite = 0;
+    controls->MemtoReg = 0;
+    controls->RegDst = 0;
+    controls->RegWrite = 0;
 
+
+    controls->ALUSrc = 0;
+
+    if (op==0) //TYPE R
+        controls->RegDst = 1;
+
+    if (op)
+
+//    if (op== 0) {
+//        //Type R
+//        controls->RegDst = 1;//Type R
+//        controls->RegWrite = 1;//Type R
+//
+//
+//    } else if (op == 3 || op==2) {
+//        //J-Type
+//    } else {
+//        controls->ALUOp = op;
+//        controls->RegDst = 1;//Type R
+//        //TYPE-I
+//
+//
+//    }
     return 1;
 
 
