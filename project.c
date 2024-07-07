@@ -13,6 +13,7 @@
 
 #define SLTI 10    // Set on less than immediate
 #define ORI 13     // OR immediate
+#define LUI 15     // OR immediate
 
 //#define ALU_ADD = 0;
 //#define ALU_MINUS = 1;
@@ -137,54 +138,94 @@ int instruction_decode(unsigned op,struct_controls *controls) {
     controls->MemtoReg = 0;
     controls->RegDst = 0;
     controls->RegWrite = 0;
-
-
     controls->ALUSrc = 0;
 
-    if (op == ADDI || op == ANDI || op == ORI || op==LW || op == SW) {
+    int used = 0;
+
+    /*
+     * ALU OP FIRST
+     */
+    if (op==0) {
+        controls->ALUOp = 2;
+
+        used  = 1;
+    }
+
+
+    if (op == BEQ||op == BNE ) {
+        controls->ALUOp = 1;
+        used  = 1;
+    }
+    if (op == ANDI||op ==ORI || op == LUI) {
+        controls->ALUOp = 3;
+        used  = 1;
+    }
+
+    /*
+     * Reg Dest
+     */
+    if (op==0) { // type r
+        controls->RegDst= 1;
+        used  = 1;
+    }
+
+    /*
+     * ALU SOURCE
+     */
+
+    //R TYPE OR ANDI OR ORI OR LUI OR LW OR SW
+    if (op==ANDI ||op==ORI||op==ADDI||op==LUI||op==LW||op==SW){
         controls->ALUSrc = 1;
-
+        used  = 1;
     }
 
-    if (op==0) //TYPE R
-        controls->RegDst = 1;
-
-    if (op ==BEQ || op == BNE ) {
-        controls->Branch=1;
-    }
-    if (op == J||op==JAL) {
-         controls->Jump = 1;
-    }
-
+    /*
+     * MEM TO REG
+     */
     if (op == LW) {
-        controls->MemRead = 1;
-        controls->MemtoReg = 1;
+        controls->MemtoReg=1;
+        used  = 1;
     }
 
-    if (op==SW) {
-        controls->MemWrite = 1;
+    /*
+     * Reg write
+     */
+    if (op==0) {//TYPE R
+
+        controls->RegWrite= 1;
+        used  = 1;
+    }
+    if (op==ANDI ||op==ORI||op==ADDI||op==LUI||op==LW) {
+        controls->RegWrite= 1;
+        used  = 1;
     }
 
 
 
+    /*
+     * MEM READ
+     */
+    if (op == LW) {
+        controls->MemRead=1;
+        used  = 1;
+    }
+    /*
+     * MEM Write
+     */
+    if (op == SW) {
+        used  = 1;
+        controls->MemWrite=1;
+    }
+    /*
+     * Branches
+     */
+    if (op == BEQ||op == BNE ) {
+        controls->Branch = 1;
+        used  = 1;
+    }
 
 
-//    if (op== 0) {
-//        //Type R
-//        controls->RegDst = 1;//Type R
-//        controls->RegWrite = 1;//Type R
-//
-//
-//    } else if (op == 3 || op==2) {
-//        //J-Type
-//    } else {
-//        controls->ALUOp = op;
-//        controls->RegDst = 1;//Type R
-//        //TYPE-I
-//
-//
-//    }
-    return 1;
+    return !used;
 
 
 }
