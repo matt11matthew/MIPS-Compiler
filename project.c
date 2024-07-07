@@ -19,6 +19,7 @@ int c =0;
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
 
+
     if (PC % 2 != 0) {
         return 1;//WORD NOT ALIGNED
     }
