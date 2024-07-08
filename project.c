@@ -46,7 +46,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
 
 //FIGURE OUT A WAY TO DETECT BAD INSTRUCTIONS!!!
-//    if (Mem[ (PC >> 2) ] % 2 != 0) { 
+//    if (Mem[ (PC >> 2) ] % 2 != 0) {
 //        printf("Bad instruction");
 //        return 1;//WORD NOT ALIGNED
 //    }
