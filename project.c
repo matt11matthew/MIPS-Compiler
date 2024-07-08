@@ -45,11 +45,11 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
 
 
-
-    if (Mem[ (PC >> 2) ] % 2 != 0) {
-        printf("Bad instruction");
-        return 1;//WORD NOT ALIGNED
-    }
+//FIGURE OUT A WAY TO DETECT BAD INSTRUCTIONS!!!
+//    if (Mem[ (PC >> 2) ] % 2 != 0) { 
+//        printf("Bad instruction");
+//        return 1;//WORD NOT ALIGNED
+//    }
 
 //    printf("FIRST PC: %d\n", PC);
 //    //16384 is 0x4000
@@ -77,16 +77,16 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     *op = decOpCode;
 
     if (decOpCode== 0) {
-        printf("R TYPE ");
         //R-Type Since OP CODE is 0 {
         int rs =   (0x3E00000 & instruction ) >> 21; //Performing bit masking and shifting 21 bits
         int rt =   (0x1F0000 & instruction ) >> 16; //Performing bit masking and shifting 16 bits
         //             OP CODE RS     RT   RD   SHAMT  FUNCT
         //BASE MASKING 000000 00000 00000 00000 00000
-        // 00000000000000000000011111000000
+        // 000000 00000 00000 00000 11111000000
 
         //SHIFT BY 11111
         int rd = (0x7C0 & instruction) >> 11;
+        printf("R TYPE ");
         printf("RS: %d\n", rs);
         printf("RT: %d\n", rt);
         printf("RD: %d\n", rd);
