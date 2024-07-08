@@ -45,18 +45,21 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
 
 
-    if (PC % 2 != 0) {
+
+    if (Mem[ (PC >> 2) ] % 2 != 0) {
+        printf("Bad instruction");
         return 1;//WORD NOT ALIGNED
     }
 
 //    printf("FIRST PC: %d\n", PC);
 //    //16384 is 0x4000
+//    int arrayIndex = PC >
 //    printf("arrayIndex: %d\n", arrayIndex);
-//
-//    int arrayIndex = PC >> 2; //Get index
+//> 2; //Get index
 //    printf("Decimal memory value: %d\n", Mem[ (PC >> 2) ]);
     *instruction = Mem[ (PC >> 2) ]; //Load instructions
 
+    int t = 3735928495%4;
     //100001
     return 0; //DONT HALT
 
@@ -70,13 +73,26 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 {
 //    printf("INSTRUCTION: %d\n", instruction);
     //111111 = 63
-    int decOpCode  = (0xFC000000&instruction ) >> 26;
+    int decOpCode  = (0xFC000000 & instruction ) >> 26;
     *op = decOpCode;
 
     if (decOpCode== 0) {
+        printf("R TYPE ");
         //R-Type Since OP CODE is 0 {
-        int rs =   (0x3E00000&instruction ) >> 21; //Performing bit masking and shifting 21 bits
-        int rt =   (0x1F0000&instruction ) >> 16; //Performing bit masking and shifting 16 bits
+        int rs =   (0x3E00000 & instruction ) >> 21; //Performing bit masking and shifting 21 bits
+        int rt =   (0x1F0000 & instruction ) >> 16; //Performing bit masking and shifting 16 bits
+        //             OP CODE RS     RT   RD   SHAMT  FUNCT
+        //BASE MASKING 000000 00000 00000 00000 00000
+        // 00000000000000000000011111000000
+
+        //SHIFT BY 11111
+        int rd = (0x7C0 & instruction) >> 11;
+        printf("RS: %d\n", rs);
+        printf("RT: %d\n", rt);
+        printf("RD: %d\n", rd);
+//        int rd = (MASK_VALUE & instruction) >> 11;
+        //
+
 
 //        printf
 
@@ -89,8 +105,12 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     } else {
         //REMAINING I-Type
 
+
+        //00000011111000000000000000000000
+
+
         //CREDIT: https://www.rapidtables.com/convert/number/hex-to-binary.html
-        int rs =   (0x3E00000&instruction ) >> 21; //Performing bit masking and shifting 21 bits
+        int rs =   (0x3E00000 & instruction ) >> 21; //Performing bit masking and shifting 21 bits
         int rt =   (0x1F0000&instruction ) >> 16; //Performing bit masking and shifting 16 bits
         int immediate =   (0xFFFF&instruction ); //Performing bit masking s
 
@@ -236,7 +256,7 @@ int instruction_decode(unsigned op,struct_controls *controls) {
     }
 
 
-    printALU(controls);
+//    printALU(controls);
     return !used;
 
 
