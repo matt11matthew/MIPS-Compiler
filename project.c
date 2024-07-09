@@ -198,7 +198,7 @@ int instruction_decode(unsigned op,struct_controls *controls) {
         controls->ALUOp = 7;
         break;
 
-    case J: //Op-code: 000 010
+    case JUMP: //Op-code: 000 010
         //J-Type
 
         controls->RegDst = 0;
@@ -430,7 +430,7 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 
     //Handling negative
     if (negative_check == 1)
-        *extended_value = offset | 0xFFFF0000 //Extending with all 1s
+        *extended_value = offset | 0xFFFF0000; //Extending with all 1s
 
     else
         *extended_value = offset & 0x0000FFFF; //Extending with all 0s
