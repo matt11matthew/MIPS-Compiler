@@ -1,19 +1,15 @@
 #include "spimcore.h"
 // J-Type Instructions
-#define J 2        // Jump
-#define JAL 3      // Jump and link
+#define JUMP 2        // Jump
 
 // I-Type Instructions
-#define SW 43      // Store word
-#define LW 35      // Load word
-#define BNE 5      // Branch if not equal
 #define BEQ 4      // Branch if equal
-#define ANDI 12    // AND immediate
 #define ADDI 8     // Add immediate
-
 #define SLTI 10    // Set on less than immediate
-#define ORI 13     // OR immediate
+#define SLTIU 11   // Set on less than immediate unsigned
 #define LUI 15     // OR immediate
+#define LW 35      // Load word
+#define SW 43      // Store word
 
 //#define ALU_ADD = 0;
 //#define ALU_MINUS = 1;
@@ -169,17 +165,84 @@ void printALU(   struct_controls *controls) {
     printf("ALUSrc: %d\n",controls->ALUSrc);
 }
 int instruction_decode(unsigned op,struct_controls *controls) {
-    controls->ALUOp = 0;
-    controls->Jump = 0;
-    controls->Branch = 0;
-    controls->MemRead = 0;
-    controls->MemWrite = 0;
-    controls->MemtoReg = 0;
-    controls->RegDst = 0;
-    controls->RegWrite = 0;
-    controls->ALUSrc = 0;
 
-    int used = 0;
+    switch(op) {
+
+    case 0: //Op-code: 000 000
+        //Always R-Type Instruction
+
+        controls->RegDst = 1;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 0;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 0;
+        controls->ALUOp = 7;
+        break;
+
+    case J: //Op-code: 000 010
+        //J-Type
+
+        controls->RegDst = 0;
+        controls->Jump = 1;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 0;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 0;
+        controls->ALUOp = 0;
+        break;
+
+    case BEQ: //Op-code: 000 100
+        //Branch on Equal
+
+        controls->RegDst = 2;
+        controls->Jump = 0;
+        controls->Branch = 1;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 2;
+        controls->RegWrite = 0;
+        controls->ALUSrc = 0;
+        controls->ALUOp = 1;
+        break;
+
+    case ADDI: //Op-code: 001 000
+        //Add on immediate
+
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 0;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 1;
+        controls->ALUOp = 0;
+        break;
+
+    case SLTI: //Op-code: 001 010
+        //Set on less than immediate
+
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 0;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 1;
+        controls->ALUOp = 0;
+        break;
+
+    }
+
+    
+
+    
 
     /*
      * ALU OP FIRST
