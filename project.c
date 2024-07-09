@@ -305,91 +305,91 @@ int instruction_decode(unsigned op,struct_controls *controls) {
 
     }
 
-    /*
-     * ALU OP FIRST
-     */
-    if (op==0) {
-        controls->ALUOp = 2;
+//     /*
+//      * ALU OP FIRST
+//      */
+//     if (op==0) {
+//         controls->ALUOp = 2;
 
-        used  = 1;
-    }
-
-
-    if (op == BEQ||op == BNE ) {
-        controls->ALUOp = 1;
-        used  = 1;
-    }
-    if (op == ANDI||op ==ORI || op == LUI) {
-        controls->ALUOp = 3;
-        used  = 1;
-    }
-
-    /*
-     * Reg Dest
-     */
-    if (op==0) { // type r
-        controls->RegDst= 1;
-        used  = 1;
-    }
-
-    /*
-     * ALU SOURCE
-     */
-
-    //R TYPE OR ANDI OR ORI OR LUI OR LW OR SW
-    if (op==ANDI ||op==ORI||op==ADDI||op==LUI||op==LW||op==SW){
-        controls->ALUSrc = 1;
-        used  = 1;
-    }
-
-    /*
-     * MEM TO REG
-     */
-    if (op == LW) {
-        controls->MemtoReg=1;
-        used  = 1;
-    }
-
-    /*
-     * Reg write
-     */
-    if (op==0) {//TYPE R
-
-        controls->RegWrite= 1;
-        used  = 1;
-    }
-    if (op==ANDI ||op==ORI||op==ADDI||op==LUI||op==LW) {
-        controls->RegWrite= 1;
-        used  = 1;
-    }
+//         used  = 1;
+//     }
 
 
+//     if (op == BEQ||op == BNE ) {
+//         controls->ALUOp = 1;
+//         used  = 1;
+//     }
+//     if (op == ANDI||op ==ORI || op == LUI) {
+//         controls->ALUOp = 3;
+//         used  = 1;
+//     }
 
-    /*
-     * MEM READ
-     */
-    if (op == LW) {
-        controls->MemRead=1;
-        used  = 1;
-    }
-    /*
-     * MEM Write
-     */
-    if (op == SW) {
-        used  = 1;
-        controls->MemWrite=1;
-    }
-    /*
-     * Branches
-     */
-    if (op == BEQ||op == BNE ) {
-        controls->Branch = 1;
-        used  = 1;
-    }
+//     /*
+//      * Reg Dest
+//      */
+//     if (op==0) { // type r
+//         controls->RegDst= 1;
+//         used  = 1;
+//     }
+
+//     /*
+//      * ALU SOURCE
+//      */
+
+//     //R TYPE OR ANDI OR ORI OR LUI OR LW OR SW
+//     if (op==ANDI ||op==ORI||op==ADDI||op==LUI||op==LW||op==SW){
+//         controls->ALUSrc = 1;
+//         used  = 1;
+//     }
+
+//     /*
+//      * MEM TO REG
+//      */
+//     if (op == LW) {
+//         controls->MemtoReg=1;
+//         used  = 1;
+//     }
+
+//     /*
+//      * Reg write
+//      */
+//     if (op==0) {//TYPE R
+
+//         controls->RegWrite= 1;
+//         used  = 1;
+//     }
+//     if (op==ANDI ||op==ORI||op==ADDI||op==LUI||op==LW) {
+//         controls->RegWrite= 1;
+//         used  = 1;
+//     }
 
 
-//    printALU(controls);
-    return !used;
+
+//     /*
+//      * MEM READ
+//      */
+//     if (op == LW) {
+//         controls->MemRead=1;
+//         used  = 1;
+//     }
+//     /*
+//      * MEM Write
+//      */
+//     if (op == SW) {
+//         used  = 1;
+//         controls->MemWrite=1;
+//     }
+//     /*
+//      * Branches
+//      */
+//     if (op == BEQ||op == BNE ) {
+//         controls->Branch = 1;
+//         used  = 1;
+//     }
+
+
+// //    printALU(controls);
+//     return !used;
 
 
 }
@@ -415,7 +415,7 @@ second reg in data 2
 // Assign the sign-extended value of offset to extended_value.
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+    
 
 }
 
