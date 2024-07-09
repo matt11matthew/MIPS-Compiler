@@ -415,7 +415,15 @@ second reg in data 2
 // Assign the sign-extended value of offset to extended_value.
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-    
+    //Check for negative offset value
+    unsigned negative_check = offset >> 15; //collect negative bit
+
+    //Handling negative
+    if (negative_check == 1)
+        *extended_value = offset | 0xFFFF0000 //Extending with all 1s
+
+    else
+        *extended_value = offset & 0x0000FFFF; //Extending with all 0s
 
 }
 
