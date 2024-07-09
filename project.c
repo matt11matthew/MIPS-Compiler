@@ -11,6 +11,15 @@
 #define LW 35      // Load word
 #define SW 43      // Store word
 
+//Funct Op-Codes - R-Type Instructions
+#define ADD 32 //Addition
+#define SUB 34 //Subtraction
+#define AND 36 //And &&
+#define OR 37 //Or ||
+#define SLL 6 //Shift Left Extended
+#define SRL 
+#define SLT 42 //Set Less Than Signed
+
 //#define ALU_ADD = 0;
 //#define ALU_MINUS = 1;
 //#define ALU_NOT = 7;
@@ -302,8 +311,9 @@ int instruction_decode(unsigned op,struct_controls *controls) {
 
     default: //Returning 1 to Halt CPU - Invalid Operation
         return 1;
-
     }
+
+    return 0;
 
 //     /*
 //      * ALU OP FIRST
@@ -431,6 +441,36 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
+
+    //Handling extended value for src
+    if (ALUSrc == 1)
+            data2 = extended_value;
+
+    //Check R-Types for Funct for ALU operation
+    if (ALUOp == 7) {
+        //Always R-Type
+
+        switch(funct) {
+
+            //Case of Addition
+            case ADD:
+                ALUOp = 0;
+                break;
+
+            //Case of Addition
+            case SUB:
+                ALUOp = 1;
+                break;
+
+            //Continue for rest of type R types
+
+        }
+
+    }
+
+    ALU(data1, data2, ALUOp, ALUresult, Zero);
+
+
     return 0;
 
 }
