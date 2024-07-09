@@ -18,25 +18,28 @@
 //#define ALU_OR  = 5;
 //#define ALU_AND  = 4;
 
-
+int c =0;
 
 /* ALU */
 /* 10 Points */
+
+// 1. Implement the operations on input parameters A and B according to ALUControl.
+// 2. Output the result (Z) to ALUresult.
+// 3. Assign Zero to 1 if the result is zero; otherwise, assign 0.
+// 4. The following table shows the operations of the ALU.
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
 
 }
 
+
 /* instruction fetch */
 // HEX 21080001
 // 001000 01000010000000000000000001
 
-
-int c =0;
-
 /* 10 Points */
-
-
+// 1. Fetch the instruction addressed by PC from Mem and write it to instruction.
+// 2. Return 1 if a halt condition occurs; otherwise, return 0.
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
 
@@ -65,6 +68,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction) {
 
 /* instruction partition */
 /* 10 Points */
+// Partition instruction into several parts (op, r1, r2, r3, funct, offset, jsec).
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
 //    printf("INSTRUCTION: %d\n", instruction);
@@ -142,6 +146,9 @@ func: Function code
 
 /* instruction decode */
 /* 15 Points */
+// 1. Decode the instruction using the opcode (op).
+// 2. Assign the values of the control signals to the variables in the structure controls
+
 /*	char RegDst;
 	char Jump;
 	char Branch;
@@ -227,6 +234,34 @@ int instruction_decode(unsigned op,struct_controls *controls) {
     case SLTI: //Op-code: 001 010
         //Set on less than immediate
 
+        controls->RegDst = 1;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 0;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 1;
+        controls->ALUOp = 2;
+        break;
+
+    case SLTIU: //Op-code: 001 011
+        //Set on less than immediate unsigned
+
+        controls->RegDst = 1;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 0;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 0;
+        controls->ALUOp = 3;
+        break;
+
+    case LUI: //Op-code: 001 111
+        //Load upper immediate
+
         controls->RegDst = 0;
         controls->Jump = 0;
         controls->Branch = 0;
@@ -235,14 +270,40 @@ int instruction_decode(unsigned op,struct_controls *controls) {
         controls->MemtoReg = 0;
         controls->RegWrite = 1;
         controls->ALUSrc = 1;
+        controls->ALUOp = 6;
+        break;
+
+    case LW: //Op-code: 100 011
+        //Load word
+
+        controls->RegDst = 0;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 1;
+        controls->MemWrite = 0;
+        controls->MemtoReg = 1;
+        controls->RegWrite = 1;
+        controls->ALUSrc = 1;
         controls->ALUOp = 0;
         break;
 
+    case SW: //Op-code: 101 011
+        //Store word
+        controls->RegDst = 2;
+        controls->Jump = 0;
+        controls->Branch = 0;
+        controls->MemRead = 0;
+        controls->MemWrite = 1;
+        controls->MemtoReg = 2;
+        controls->RegWrite = 0;
+        controls->ALUSrc = 1;
+        controls->ALUOp = 0;
+        break;
+
+    default: //Returning 1 to Halt CPU - Invalid Operation
+        return 1;
+
     }
-
-    
-
-    
 
     /*
      * ALU OP FIRST
@@ -335,6 +396,7 @@ int instruction_decode(unsigned op,struct_controls *controls) {
 
 /* Read Register */
 /* 5 Points */
+// Read the registers addressed by r1 and r2 from Reg, and write the read values to data1 and data2 respectively
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
 
@@ -350,8 +412,10 @@ second reg in data 2
 
 /* Sign Extend */
 /* 10 Points */
+// Assign the sign-extended value of offset to extended_value.
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
+
 
 }
 
