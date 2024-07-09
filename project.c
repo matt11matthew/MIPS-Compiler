@@ -76,25 +76,33 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     int decOpCode  = (0xFC000000 & instruction ) >> 26;
     *op = decOpCode;
 
+    /*
+     * RS: Source Register
+RT: Target Register
+RD: Destination Register
+shamt:  Shift amount
+func: Function code
+     */
     if (decOpCode== 0) {
         //R-Type Since OP CODE is 0 {
         int rs =   (0x3E00000 & instruction ) >> 21; //Performing bit masking and shifting 21 bits
         int rt =   (0x1F0000 & instruction ) >> 16; //Performing bit masking and shifting 16 bits
         //             OP CODE RS     RT   RD   SHAMT  FUNCT
-        //BASE MASKING 000000 00000 00000 00000 00000
-        // 000000 00000 00000 00000 11111000000
+        //BASE MASKING 000000 00000 00000 00000 00000 000000
+        //             000000 00000 00000 00000 00000 111111
 
+        //add $10, $8, $9		r10 = r8 + r9 = 4
         //SHIFT BY 11111
-        int rd = (0x7C0 & instruction) >> 11;
-        printf("R TYPE ");
-        printf("RS: %d\n", rs);
-        printf("RT: %d\n", rt);
-        printf("RD: %d\n", rd);
-//        int rd = (MASK_VALUE & instruction) >> 11;
-        //
+        int rd = (0xF800 & instruction) >> 11;
+        int shamt = (0x7C0  & instruction) >> 6;
+        int func = (0x3F  & instruction);
+//0x7C0 SHMT
+        *r1 = rs;
+        *r2 = rt;
+        *r3 = rd;
+        *funct = func;
+        *offset = shamt;//TODO: CHANGE?
 
-
-//        printf
 
     } else if (decOpCode == 3 || decOpCode==2){
         //J-Type
@@ -267,7 +275,14 @@ int instruction_decode(unsigned op,struct_controls *controls) {
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
 
+    *data1 = Reg[r1];
+    *data2 = Reg[r2];
 }
+/*
+ * Just read registers if we access reg index 5 we access reg 5, store data in first reg in data 1
+
+second reg in data 2
+ */
 
 
 /* Sign Extend */
@@ -281,6 +296,7 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
+    return 0;
 
 }
 
@@ -288,6 +304,7 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
+    return 0;
 
 }
 
