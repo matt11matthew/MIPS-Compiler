@@ -173,7 +173,7 @@ func: Function code
         *offset = shamt; //TODO: CHANGE?
     } else if (decOpCode == 3 || decOpCode == 2) {
         //J-Type
-        printf("JSEC TEST %d\n",  instruction & 0x03ffffff);
+        // printf("JSEC TEST %d\n",  instruction & 0x03ffffff);
  //10000000 JUMPING TO
         *jsec = instruction & 0x03ffffff;
         //000100 01010 01011 11111 11111111101 LABEL IT SHOULD GO TO
@@ -197,17 +197,17 @@ func: Function code
 // 1. Decode the instruction using the opcode (op).
 // 2. Assign the values of the control signals to the variables in the structure controls
 
-void printALU(struct_controls *controls) {
-    printf("ALUOp: %d\n", controls->ALUOp);
-    printf("Jump: %d\n", controls->Jump);
-    printf("Branch: %d\n", controls->Branch);
-    printf("MemRead: %d\n", controls->MemRead);
-    printf("MemWrite: %d\n", controls->MemWrite);
-    printf("MemtoReg: %d\n", controls->MemtoReg);
-    printf("RegDst: %d\n", controls->RegDst);
-    printf("RegWrite: %d\n", controls->RegWrite);
-    printf("ALUSrc: %d\n", controls->ALUSrc);
-}
+// void printALU(struct_controls *controls) {
+//     printf("ALUOp: %d\n", controls->ALUOp);
+//     printf("Jump: %d\n", controls->Jump);
+//     printf("Branch: %d\n", controls->Branch);
+//     printf("MemRead: %d\n", controls->MemRead);
+//     printf("MemWrite: %d\n", controls->MemWrite);
+//     printf("MemtoReg: %d\n", controls->MemtoReg);
+//     printf("RegDst: %d\n", controls->RegDst);
+//     printf("RegWrite: %d\n", controls->RegWrite);
+//     printf("ALUSrc: %d\n", controls->ALUSrc);
+// }
 
 int instruction_decode(unsigned op, struct_controls *controls) {
     switch (op) {
@@ -517,10 +517,10 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1) {
-        printf("Changed PC?  %d\n", *PC);
+        // printf("Changed PC?  %d\n", *PC);
         //0000000000000000 0000001000000000
         *PC = ((jsec << 2) | (*PC & 0xF0000000))  ;
-        printf("Changed PC?  %d\n", *PC);
+        // printf("Changed PC?  %d\n", *PC);
         // *PC = ((jsec << 2) | (*PC & 0xF0000000)) << 28;
     }
     if (Branch == 1 && Zero == 1) {
