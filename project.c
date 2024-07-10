@@ -82,7 +82,7 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
 
     int opCode =(0xFC000000 & var) >> 26;
     if (!isValidOpCode(opCode)) {
-
+        return 1;
     }
     *instruction = Mem[(PC >> 2)]; //Load instructions
 
@@ -110,7 +110,7 @@ func: Function code
     if (decOpCode == 0) {
         //R-Type Since OP CODE is 0 {
         int rs = (0x3E00000 & instruction) >> 21; //Performing bit masking and shifting 21 bits
-        int rt = (0x1F0000 & instruction) >> 16; //Performing bit masking and shifting 16 bits
+        int rt = (0x1F0000 & instruction) >> 16; //Performing bit masking and shifting 16 bits`
         //             OP CODE RS     RT   RD   SHAMT  FUNCT
         //BASE MASKING 000000 00000 00000 00000 00000 010000
         //             000000 00000 00000 00000 00000 111111
