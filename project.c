@@ -97,7 +97,7 @@ func: Function code
         int rs =   (0x3E00000 & instruction ) >> 21; //Performing bit masking and shifting 21 bits
         int rt =   (0x1F0000 & instruction ) >> 16; //Performing bit masking and shifting 16 bits
         //             OP CODE RS     RT   RD   SHAMT  FUNCT
-        //BASE MASKING 000000 00000 00000 00000 00000 000000
+        //BASE MASKING 000000 00000 00000 00000 00000 010000
         //             000000 00000 00000 00000 00000 111111
 
         //add $10, $8, $9		r10 = r8 + r9 = 4
@@ -425,6 +425,7 @@ second reg in data 2
 // Assign the sign-extended value of offset to extended_value.
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
+
     //Check for negative offset value
     unsigned negative_check = offset >> 15; //collect negative bit
 
