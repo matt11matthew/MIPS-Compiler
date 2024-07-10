@@ -173,10 +173,11 @@ func: Function code
         *offset = shamt; //TODO: CHANGE?
     } else if (decOpCode == 3 || decOpCode == 2) {
         //J-Type
-        printf("JSEC TEST %d\n", decOpCode << 6);
+        printf("JSEC TEST %d\n",  instruction & 0x03ffffff);
  //10000000 JUMPING TO
+        *jsec = instruction & 0x03ffffff;
         //000100 01010 01011 11111 11111111101 LABEL IT SHOULD GO TO
-        *jsec = decOpCode << 6; //UNSURE IF THIS WORKS
+        // *jsec = instruction << 6; //UNSURE IF THIS WORKS
     } else {
         //REMAINING I-Type
 
@@ -516,14 +517,15 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1) {
-        // printf("JUMP"); /
+        printf("Changed PC?  %d\n", *PC);
         //0000000000000000 0000001000000000
         *PC = ((jsec << 2) | (*PC & 0xF0000000))  ;
+        printf("Changed PC?  %d\n", *PC);
         // *PC = ((jsec << 2) | (*PC & 0xF0000000)) << 28;
     }
     if (Branch == 1 && Zero == 1) {
 
         *PC += extended_value << 2;
-        printf("BRANCH");
+        // printf("BRANCH");
     }
 }
