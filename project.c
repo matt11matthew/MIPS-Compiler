@@ -80,8 +80,9 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
 
     int var = Mem[(PC >> 2)];
 
-    int opCode =(0xFC000000 & var) >> 26;
-    if (!isValidOpCode(opCode)) {
+    int opCode = (0xFC000000 & var) >> 26;
+
+    if (!isValidOpCode(opCode)) { //Checks all op codes.
         return 1;
     }
     *instruction = Mem[(PC >> 2)]; //Load instructions
