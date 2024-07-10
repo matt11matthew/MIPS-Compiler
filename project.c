@@ -435,14 +435,57 @@ int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, u
 
 /* Write Register */
 /* 10 Points */
-void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresult, char RegWrite, char RegDst,
-                    char MemtoReg, unsigned *Reg) {
-}
+void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresult, char RegWrite, char RegDst, char MemtoReg, unsigned *Reg) {
+    //Ensure we are writing to Memory
+    if (RegWrite == 1) {
 
+        //Determining which data to send
+        switch (MemtoReg) {
+
+            //Case of Writing Result to Register
+            case 0:
+
+                //Determining r2 or r3 addressing
+                    switch(RegDst) {
+
+                        //Case of r2
+                        case 0:
+                            Reg[r2] = ALUresult;
+                        break;
+
+                        //Case of r3
+                        case 1:
+                            Reg[r3] = ALUresult;
+                        break;
+                    }
+
+            break;
+
+            //Case of Writing Memory to Register
+            case 1:
+
+                //Determining r2 or r3 addressing
+                    switch(RegDst) {
+
+                        //Case of r2
+                        case 0:
+                            Reg[r2] = memdata;
+                        break;
+
+                        //Case of r3
+                        case 1:
+                            Reg[r3] = memdata;
+                        break;
+                    }
+
+            break;
+
+        }}
+}
 /* PC update */
 /* 10 Points */
 void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned *PC) {
     *PC +=4;
 
-    
+
 }
