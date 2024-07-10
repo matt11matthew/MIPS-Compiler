@@ -32,9 +32,9 @@
 
 #define  ALU_SLL 6 //Shift Left Extended
 
-#define  ALU_SRL
-
 #define  ALU_SLT 42 //Set Less Than Signed
+#define  ALU_SLTU 43 //Set Less Than Signed
+
 
 
 /* ALU */
@@ -64,9 +64,9 @@ int isValidOpCode(int input) {
 // 4. The following table shows the operations of the ALU.
 
 void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zero) {
-    if (ALUControl == 0) { //ADDITION
-        *ALUresult = A + B;
-    }
+
+    *Zero = 0; // Based on instructions;
+
     switch (ALUControl) {
         case 0: //Addition
             *ALUresult = A + B;
@@ -74,9 +74,33 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
         case 1: //Subtraction
             *ALUresult = A - B;
             break;
+        case 2: // A < B, Z = 1
+            if (A < B)    *ALUresult = 1;
+            else *ALUresult = 0;
+            break;
+        case 3: // A < B, Z=; otherwise z = 0
+            if (A < B)    *ALUresult = 1;
+            else *ALUresult = 0;
+            break;
+
+        case 4: ///if A < B, Z = 1; otherwise, Z = 0 (A and B are unsigned integers)
+
+
+            break;
+       case 5: //100 Z = A AND B
+
+
+
+            break;
+        case 6: //Z = NOT A
+            break;
 
     }
+    if (*ALUresult <  1) {
+        *Zero = 1;
+    }
 }
+
 
 
 /* instruction fetch */
@@ -349,8 +373,6 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
     if (ALUSrc == 1)
         data2 = extended_value;
 
-    int newOpCode =-1;
-
     //Check R-Types for Funct for ALU operation
     if (ALUOp == 7) {
         //Always R-Type
@@ -358,24 +380,50 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
         switch (funct) {
             //Case of Addition
             case ALU_ADD:
-                newOpCode = 0;
-                break;
+                ALUOp = 0;
+            break;
 
-            //Case of Addition
+            //Case of Subtraction
             case ALU_SUB:
-                newOpCode = 1;
-                break;
+                ALUOp = 1;
+            break;
 
-            //Continue for rest of type R types
+            //Case of Set on Less Than
+            case ALU_SLT:
+                ALUOp = 2;
+            break;
+
+            //Case of Set on Less Than Unsigned
+            case ALU_SLTU:
+                ALUOp = 3;
+            break;
+
+            //Case of And
+            case ALU_AND:
+                ALUOp = 4;
+            break;
+
+            //Case of Or
+            case ALU_OR:
+                ALUOp = 5;
+            break;
+
+            //Case of SLL
+            case ALU_SLL:
+                ALUOp = 6;
+            break;
+
+            //HALT - Not Valid Signal
+            default:
+                return 1;
+
         }
     }
 
-    if (newOpCode==-1) return 1; // INVALID INPUT HALT
+    //Send data and instructions to ALU for processing
+    ALU(data1, data2, ALUOp, ALUresult, Zero);
 
-
-    ALU(data1, data2, newOpCode, ALUresult, Zero);
-
-
+    //Final Return
     return 0;
 }
 
