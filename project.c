@@ -77,7 +77,7 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
             *ALUresult = A - B;
             break;
         case 2: // A < B, Z = 1
-            if (A < B)    *ALUresult = 1;
+            if ((signed)A < (signed)B)    *ALUresult = 1;
             else *ALUresult = 0;
             break;
         case 3: // A < B, Z=; otherwise z = 0
