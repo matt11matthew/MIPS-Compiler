@@ -99,7 +99,7 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
         case 6: //Z = Shift B Left By 16 Bits
             *ALUresult = B << 16;
             break;
-            
+
         case 7: //Z = NOT A
             *ALUresult = ~A;
             break;
@@ -513,7 +513,7 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1)
-        *PC = (jsec << 2 | ((*PC & 0xF0000000) >> 28));
+        *PC = (jsec << 2 | (*PC & 0xF0000000);
 
     else if (Branch == 1 && Zero == 1)
         *PC += extended_value << 2;
