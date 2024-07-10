@@ -45,6 +45,9 @@ int isValidOpCode(int input) {
         case SLTI:
         case SLTIU:
         case LUI:
+
+        case JUMP:
+        case  BEQ:
         case LW:
         case SW:
             return 1;
