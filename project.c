@@ -73,25 +73,34 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
         case 0: //Addition
             *ALUresult = A + B;
             break;
+
         case 1: //Subtraction
             *ALUresult = A - B;
             break;
+
         case 2: // A < B, Z = 1
             if ((signed)A < (signed)B)    *ALUresult = 1;
             else *ALUresult = 0;
             break;
+
         case 3: // A < B, Z=; otherwise z = 0
             if (A < B)    *ALUresult = 1;
             else *ALUresult = 0;
             break;
-        case 4: ///if A < B, Z = 1; otherwise, Z = 0 (A and B are unsigned integers)
-            if (A < B)    *ALUresult = 1;
-            else *ALUresult = 0;
-            break;
-       case 5: // Z = A AND B
+
+        case 4: // Z = A AND B
             *ALUresult = A & B;
             break;
-        case 6: //Z = NOT A
+
+        case 5: //Z = A OR B
+            *ALUresult = A | B;
+            break;
+
+        case 6: //Z = Shift B Left By 16 Bits
+            *ALUresult = B << 16;
+            break;
+            
+        case 7: //Z = NOT A
             *ALUresult = ~A;
             break;
 
