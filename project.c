@@ -64,6 +64,18 @@ int isValidOpCode(int input) {
 // 4. The following table shows the operations of the ALU.
 
 void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zero) {
+    if (ALUControl == 0) { //ADDITION
+        *ALUresult = A + B;
+    }
+    switch (ALUControl) {
+        case 0: //Addition
+            *ALUresult = A + B;
+            break;
+        case 1: //Subtraction
+            *ALUresult = A - B;
+            break;
+
+    }
 }
 
 
@@ -337,6 +349,8 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
     if (ALUSrc == 1)
         data2 = extended_value;
 
+    int newOpCode =-1;
+
     //Check R-Types for Funct for ALU operation
     if (ALUOp == 7) {
         //Always R-Type
@@ -344,19 +358,22 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
         switch (funct) {
             //Case of Addition
             case ALU_ADD:
-                ALUOp = 0;
+                newOpCode = 0;
                 break;
 
             //Case of Addition
             case ALU_SUB:
-                ALUOp = 1;
+                newOpCode = 1;
                 break;
 
             //Continue for rest of type R types
         }
     }
 
-    ALU(data1, data2, ALUOp, ALUresult, Zero);
+    if (newOpCode==-1) return 1; // INVALID INPUT HALT
+
+
+    ALU(data1, data2, newOpCode, ALUresult, Zero);
 
 
     return 0;
