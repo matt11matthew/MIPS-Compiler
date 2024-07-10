@@ -46,7 +46,7 @@ int isValidOpCode(int input) {
         case SLTIU:
         case LUI:
         case JUMP:
-        case  BEQ:
+        case BEQ:
         case LW:
         case SW:
             return 1;
@@ -118,11 +118,10 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
 
     int opCode = (0xFC000000 & var) >> 26;
 
-    if (!isValidOpCode(opCode)) { //Checks all op codes.
+    if (!isValidOpCode(opCode)) { //Checks for invalid instruction
         return 1;
     }
     *instruction = Mem[(PC >> 2)]; //Load instructions
-
     return 0; //DONT HALT
 }
 
