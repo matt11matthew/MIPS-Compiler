@@ -480,12 +480,22 @@ void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresu
 
             break;
 
-        }}
+        }
+
+    }
 }
 /* PC update */
 /* 10 Points */
 void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned *PC) {
-    *PC +=4;
 
+    //Incrementing by 4
+    *PC += 4;
+
+    //Jump Statement Handling
+    if (Jump == 1)
+        *PC = (jsec << 2 | ((*PC & 0xF0000000) >> 28);
+
+    else if (Branch == 1)
+        *PC += extended_value << 2;    
 
 }
