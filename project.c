@@ -513,7 +513,7 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1)
-        *PC = (jsec << 2 | (*PC & 0xF0000000);
+        *PC = (jsec << 2 | (*PC & 0xF0000000));
 
     else if (Branch == 1 && Zero == 1)
         *PC += extended_value << 2;
