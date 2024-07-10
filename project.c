@@ -40,12 +40,11 @@
 /* ALU */
 int isValidOpCode(int input) {
     switch (input) {
-        case 0:
+        case 0: // R-Type
         case ADDI:
         case SLTI:
         case SLTIU:
         case LUI:
-
         case JUMP:
         case  BEQ:
         case LW:
@@ -85,17 +84,15 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
             if (A < B)    *ALUresult = 1;
             else *ALUresult = 0;
             break;
-
         case 4: ///if A < B, Z = 1; otherwise, Z = 0 (A and B are unsigned integers)
-
-
+            if (A < B)    *ALUresult = 1;
+            else *ALUresult = 0;
             break;
-       case 5: //100 Z = A AND B
-
-
-
+       case 5: // Z = A AND B
+            *ALUresult = A & B;
             break;
         case 6: //Z = NOT A
+            *ALUresult = ~A;
             break;
 
     }
