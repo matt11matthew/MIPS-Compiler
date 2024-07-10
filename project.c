@@ -1,44 +1,89 @@
 #include "spimcore.h"
+
 // J-Type Instructions
+
 #define JUMP 2        // Jump
 
 // I-Type Instructions
+
 #define BEQ 4      // Branch if equal
+
 #define ADDI 8     // Add immediate
+
 #define SLTI 10    // Set on less than immediate
+
 #define SLTIU 11   // Set on less than immediate unsigned
+
 #define LUI 15     // OR immediate
+
 #define LW 35      // Load word
+
 #define SW 43      // Store word
 
 //Funct Op-Codes - R-Type Instructions
+
 #define ALU_ADD 32 //Addition
+
 #define  ALU_SUB 34 //Subtraction
+
 #define  ALU_AND 36 //And &&
+
 #define  ALU_OR 37 //Or ||
+
 #define  ALU_SLL 6 //Shift Left Extended
+
 #define  ALU_SRL
+
 #define  ALU_SLT 42 //Set Less Than Signed
 
 
 /* ALU */
+int isValidOpCode(int input) {
+    switch (input) {
+        case 0:
+        case ADDI:
+        case SLTI:
+        case SLTIU:
+        case LUI:
+        case LW:
+        case SW:
+            return 1;
+    }
+    return 0;
+}
+
 /* 10 Points */
 
+
 // 1. Implement the operations on input parameters A and B according to ALUControl.
+
 // 2. Output the result (Z) to ALUresult.
+
 // 3. Assign Zero to 1 if the result is zero; otherwise, assign 0.
+
 // 4. The following table shows the operations of the ALU.
+
 void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zero) {
 }
 
 
 /* instruction fetch */
+
 /* 10 Points */
+
 // 1. Fetch the instruction addressed by PC from Mem and write it to instruction.
+
 // 2. Return 1 if a halt condition occurs; otherwise, return 0.
+
 int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
     //FIGURE OUT A WAY TO DETECT BAD INSTRUCTIONS!!!
 
+    int var = Mem[(PC >> 2)];
+
+    int opCode =(0xFC000000 & var) >> 26;
+    if (!isValidOpCode(opCode)) {
+
+    }
     *instruction = Mem[(PC >> 2)]; //Load instructions
 
     return 0; //DONT HALT
