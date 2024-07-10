@@ -429,6 +429,17 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
 /* Read / Write Memory */
 /* 10 Points */
 int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, unsigned *memdata, unsigned *Mem) {
+
+    //Check if Reading Memory
+    if (MemRead == 1) {
+        *memdata = Mem[ALUresult >> 2];
+    }
+
+    //Check if Writing Memory
+    if (MemWrite == 1) {
+        Mem[ALUresult >> 2] = data2;
+    }
+
     return 0;
 }
 
@@ -493,9 +504,8 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1)
-        *PC = (jsec << 2 | ((*PC & 0xF0000000) >> 28);
+        *PC = (jsec << 2 | ((*PC & 0xF0000000) >> 28));
 
-    else if (Branch == 1)
-        *PC += extended_value << 2;    
-
+    else if (Branch == 1 && Zero == 1)
+        *PC += extended_value << 2;
 }
