@@ -1,43 +1,27 @@
 #include "spimcore.h"
 
-// J-Type Instructions
+//Main Op-Code & Instruction Comparison Definitons:
+    // J-Type Instructions
+    #define JUMP 2          // Jump
 
-#define JUMP 2        // Jump
+    // I-Type Instructions
+    #define BEQ 4           // Branch if equal
+    #define ADDI 8          // Add immediate
+    #define SLTI 10         // Set on less than immediate
+    #define SLTIU 11        // Set on less than immediate unsigned
+    #define LUI 15          // OR immediate
+    #define LW 35           // Load word
+    #define SW 43           // Store word
 
-// I-Type Instructions
+    //Funct Op-Codes - R-Type Instructions
+    #define ALU_ADD 32      //Addition
+    #define  ALU_SUB 34     //Subtraction
+    #define  ALU_AND 36     //And &&
+    #define  ALU_OR 37      //Or ||
+    #define  ALU_SLL 6      //Shift Left Extended
+    #define  ALU_SLT 42     //Set Less Than Signed
+    #define  ALU_SLTU 43    //Set Less Than Signed
 
-#define BEQ 4      // Branch if equal
-
-#define ADDI 8     // Add immediate
-
-#define SLTI 10    // Set on less than immediate
-
-#define SLTIU 11   // Set on less than immediate unsigned
-
-#define LUI 15     // OR immediate
-
-#define LW 35      // Load word
-
-#define SW 43      // Store word
-
-//Funct Op-Codes - R-Type Instructions
-
-#define ALU_ADD 32 //Addition
-
-#define  ALU_SUB 34 //Subtraction
-
-#define  ALU_AND 36 //And &&
-
-#define  ALU_OR 37 //Or ||
-
-#define  ALU_SLL 6 //Shift Left Extended
-
-#define  ALU_SLT 42 //Set Less Than Signed
-#define  ALU_SLTU 43 //Set Less Than Signed
-
-
-
-/* ALU */
 int isValidOpCode(int input) {
     switch (input) {
         case 0: // R-Type
@@ -54,74 +38,89 @@ int isValidOpCode(int input) {
     return 0;
 }
 
-/* 10 Points */
-
+// ALU 
+// 10 Points    -------------------------------------------------------------------------
 
 // 1. Implement the operations on input parameters A and B according to ALUControl.
-
 // 2. Output the result (Z) to ALUresult.
-
 // 3. Assign Zero to 1 if the result is zero; otherwise, assign 0.
-
 // 4. The following table shows the operations of the ALU.
-
 void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zero) {
 
-    *Zero = 0; // Based on instructions;
-
     switch (ALUControl) {
-        case 0: //Addition
+        case 0: //Addition 000
             *ALUresult = A + B;
             break;
 
-        case 1: //Subtraction
+        case 1: //Subtraction 001
             *ALUresult = A - B;
             break;
 
-        case 2: // A < B, Z = 1
-            if ((signed)A < (signed)B)    *ALUresult = 1;
-            else *ALUresult = 0;
+        case 2: //Signed A < B, Z = 1 Otherwise Z = 0 010
+            if ((signed)A < (signed)B)   
+                *ALUresult = 1;
+            else 
+                *ALUresult = 0;
             break;
 
-        case 3: // A < B, Z=; otherwise z = 0
-            if (A < B)    *ALUresult = 1;
-            else *ALUresult = 0;
+        case 3: //Unsigned A < B, Z = 1; Otherwise Z = 0 011
+            if (A < B)
+                *ALUresult = 1;
+            else 
+                *ALUresult = 0;
             break;
 
-        case 4: // Z = A AND B
+        case 4: //Z = A AND B 100
             *ALUresult = A & B;
             break;
 
-        case 5: //Z = A OR B
+        case 5: //Z = A OR B 101
             *ALUresult = A | B;
             break;
 
-        case 6: //Z = Shift B Left By 16 Bits
+        case 6: //Z = Shift B (extended value) Left By 16 Bits 110
             *ALUresult = B << 16;
             break;
 
-        case 7: //Z = NOT A
+        case 7: //Z = NOT A 111
             *ALUresult = ~A;
             break;
 
     }
-    if (*ALUresult <  1) {
+
+    //Final result is zero
+    if (*ALUresult == 0) 
         *Zero = 1;
-    }
+    
+    //Final result is not zero
+    else
+        *Zero = 0; // Based on instructions;
 }
 
 
 
-/* instruction fetch */
-
-/* 10 Points */
+//Instruction Fetch
+// 10 Points    -------------------------------------------------------------------------
 
 // 1. Fetch the instruction addressed by PC from Mem and write it to instruction.
-
 // 2. Return 1 if a halt condition occurs; otherwise, return 0.
-
 int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
     //FIGURE OUT A WAY TO DETECT BAD INSTRUCTIONS!!!
+
+    /*
+    //Check if instruction/word has proper allignment (halt condition)
+    if (PC % 4 == 0) {
+        //Properly alligned - write / do not halt
+        *instruction = Mem[(PC >> 2)];
+
+        return 0;
+    }
+
+    else
+        //Not properly alligned - halt
+        return 1;
+
+    */
 
     int var = Mem[(PC >> 2)];
 
@@ -135,23 +134,42 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
 }
 
 //CREDIT for bitwise operations: https://www.rapidtables.com/convert/number/hex-to-binary.html
-/* instruction partition */
-/* 10 Points */
-// Partition instruction into several parts (op, r1, r2, r3, funct, offset, jsec).
-void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, unsigned *r2, unsigned *r3,
-                           unsigned *funct, unsigned *offset, unsigned *jsec) {
-    //    printf("INSTRUCTION: %d\n", instruction);
+// Instruction Partition
+// 10 Points    -------------------------------------------------------------------------
+
+// 1. Partition instruction into several parts (op, r1, r2, r3, funct, offset, jsec).
+// 2. Read line 41 to 47 of spimcore.c for more information.
+void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec) {
+
+    /*
+    //Assigning Op-code
+    *op = (0xFC000000 & instruction) >> 26; //0xFC000000 =  11111100000000000000000000000000 (bits 31-26)
+
+    *r1 = (0x3E00000 & instruction) >> 21;  //0x3E00000 =   00000011111000000000000000000000 (bits 25-21)
+
+    *r2 = (0x1F0000 & instruction) >> 16;   //0x1F0000 =    00000000000111110000000000000000 (bits 20-16)
+
+    *r3 = (0xF800 & instruction) >> 11;     //0xF800 =      00000000000000001111100000000000 (bits 15-11)
+
+    *funct = (0x3F & instruction);          //0x3F =        00000000000000000000000000111111 (bits 5-0)
+
+    *offset = (0xFFFF & instruction);       //0x7C0 =       00000000000000001111111111111111 (bits 15 - 0)
+
+    *jsec = (0x03ffffff & instruction);     //0x03ffffff =  00000011111111111111111111111111 (bits 25-0)
+                                                            
+    */
+
+    //printf("INSTRUCTION: %d\n", instruction);
     //111111 = 63
     int decOpCode = (0xFC000000 & instruction) >> 26;
     *op = decOpCode;
 
-    /*
-     * RS: Source Register
-RT: Target Register
-RD: Destination Register
-shamt:  Shift amount
-func: Function code
-     */
+    // RS: Source Register
+    // RT: Target Register
+    // RD: Destination Register
+    // shamt:  Shift amount
+    // func: Function code
+
     if (decOpCode == 0) {
         //R-Type Since OP CODE is 0 {
         int rs = (0x3E00000 & instruction) >> 21; //Performing bit masking and shifting 21 bits
@@ -162,24 +180,31 @@ func: Function code
 
         //add $10, $8, $9		r10 = r8 + r9 = 4
         //SHIFT BY 11111
+
         int rd = (0xF800 & instruction) >> 11;
-        int shamt = (0x7C0 & instruction) >> 6;
+        int shamt = (0x7C0 & instruction) >> 6; // 0x7C0 = 00000000000000000000011111000000
         int func = (0x3F & instruction);
+
         //0x7C0 SHMT
+
         *r1 = rs;
         *r2 = rt;
         *r3 = rd;
         *funct = func;
         *offset = shamt; //TODO: CHANGE?
-    } else if (decOpCode == 3 || decOpCode == 2) {
+    } 
+
+    else if (decOpCode == 3 || decOpCode == 2) {
         //J-Type
         // printf("JSEC TEST %d\n",  instruction & 0x03ffffff);
  //10000000 JUMPING TO
         *jsec = instruction & 0x03ffffff;
         //000100 01010 01011 11111 11111111101 LABEL IT SHOULD GO TO
         // *jsec = instruction << 6; //UNSURE IF THIS WORKS
-    } else {
-        //REMAINING I-Type
+    }
+
+    //Remaining - Handling I-Type
+    else {
 
         int rs = (0x3E00000 & instruction) >> 21; //Performing bit masking and shifting 21 bits
         int rt = (0x1F0000 & instruction) >> 16; //Performing bit masking and shifting 16 bits
@@ -192,8 +217,9 @@ func: Function code
 }
 
 
-/* instruction decode */
-/* 15 Points */
+// instruction decode
+// 15 Points    -------------------------------------------------------------------------
+
 // 1. Decode the instruction using the opcode (op).
 // 2. Assign the values of the control signals to the variables in the structure controls
 
@@ -210,6 +236,7 @@ func: Function code
 // }
 
 int instruction_decode(unsigned op, struct_controls *controls) {
+    
     switch (op) {
         case 0: //Op-code: 000 000
             //Always R-Type Instruction
@@ -343,25 +370,21 @@ int instruction_decode(unsigned op, struct_controls *controls) {
     return 0;
 }
 
-/* Read Register */
-/* 5 Points */
-// Read the registers addressed by r1 and r2 from Reg, and write the read values to data1 and data2 respectively
+// Read Register
+// 5 Points     -------------------------------------------------------------------------
+
+// 1. Read the registers addressed by r1 and r2 from Reg, and write the read values to data1 and data2 respectively
 void read_register(unsigned r1, unsigned r2, unsigned *Reg, unsigned *data1, unsigned *data2) {
     *data1 = Reg[r1];
     *data2 = Reg[r2];
 }
 
-/*
- * Just read registers if we access reg index 5 we access reg 5, store data in first reg in data 1
+// Sign Extend
+// 10 Points    -------------------------------------------------------------------------
 
-second reg in data 2
- */
-
-
-/* Sign Extend */
-/* 10 Points */
-// Assign the sign-extended value of offset to extended_value.
+// 1. Assign the sign-extended value of offset to extended_value.
 void sign_extend(unsigned offset, unsigned *extended_value) {
+    
     //Check for negative offset value
     unsigned negative_check = offset >> 15; //collect negative bit
 
@@ -377,10 +400,16 @@ void sign_extend(unsigned offset, unsigned *extended_value) {
      */
 }
 
-/* ALU operations */
-/* 10 Points */
-int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsigned funct, char ALUOp, char ALUSrc,
-                   unsigned *ALUresult, char *Zero) {
+// ALU operations 
+// 10 Points    -------------------------------------------------------------------------
+
+// 1. Apply ALU operations on data1, and data2 or extended_value (determined by ALUSrc).
+// 2. The operation performed is based on ALUOp and funct.
+// 3. Apply the function ALU(...).
+// 4. Output the result to ALUresult.
+// 5. Return 1 if a halt condition occurs; otherwise, return 0.
+int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsigned funct, char ALUOp, char ALUSrc, unsigned *ALUresult, char *Zero) {
+    
     //Handling extended value for src
     if (ALUSrc == 1)
         data2 = extended_value;
@@ -435,31 +464,48 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
     //Send data and instructions to ALU for processing
     ALU(data1, data2, ALUOp, ALUresult, Zero);
 
-    //Final Return
+    //Final Return - No Halt
     return 0;
 }
 
-/* Read / Write Memory */
-/* 10 Points */
+// Read / Write Memory 
+// 10 Points    -------------------------------------------------------------------------
+
+// 1. Use the value of MemWrite or MemRead to determine if a memory writeoperation or memory read operation or neither is occurring.
+// 2. If reading from memory, read the content of the memory location addressed by ALUresult to memdata.
+// 3. If writing to memory, write the value of data2 to the memory locationaddressed by ALUresult.
+// 4. Return 1 if a halt condition occurs; otherwise, return 0.
 int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, unsigned *memdata, unsigned *Mem) {
 
-    //Check if Reading Memory
-    if (MemRead == 1) {
-        *memdata = Mem[ALUresult >> 2];
+    //Check if ALUresult is properly alligned (halt condition)
+    if (ALUresult % 4 == 0) {
+
+        //Check if Reading Memory
+        if (MemRead == 1) {
+            *memdata = Mem[ALUresult >> 2];
+        }
+
+        //Check if Writing Memory
+        if (MemWrite == 1) {
+            Mem[ALUresult >> 2] = data2;
+        }
     }
 
-    //Check if Writing Memory
-    if (MemWrite == 1) {
-        Mem[ALUresult >> 2] = data2;
-    }
+    //ALUresult is not properly alligned - HALT
+    else
+        return 1;
 
+    //Final return - did not halt
     return 0;
 }
 
 
-/* Write Register */
-/* 10 Points */
+// Write Register
+// 10 Points    -------------------------------------------------------------------------
+
+// 1. Write the data (ALUresult or memdata) to a register (Reg) addressed by r2 or r3.
 void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresult, char RegWrite, char RegDst, char MemtoReg, unsigned *Reg) {
+
     //Ensure we are writing to Memory
     if (RegWrite == 1) {
 
@@ -508,24 +554,20 @@ void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresu
 
     }
 }
-/* PC update */
-/* 10 Points */
+
+// PC update
+// 10 Points    -------------------------------------------------------------------------
+
+// 1. Update the program counter (PC).
 void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned *PC) {
 
     //Incrementing by 4
     *PC += 4;
 
     //Jump Statement Handling
-    if (Jump == 1) {
-        // printf("Changed PC?  %d\n", *PC);
-        //0000000000000000 0000001000000000
-        *PC = ((jsec << 2) | (*PC & 0xF0000000))  ;
-        // printf("Changed PC?  %d\n", *PC);
-        // *PC = ((jsec << 2) | (*PC & 0xF0000000)) << 28;
-    }
-    if (Branch == 1 && Zero == 1) {
+    if (Jump == 1)
+        *PC = ((jsec << 2) | (*PC & 0xF0000000));
 
+    if (Branch == 1 && Zero == 1)
         *PC += extended_value << 2;
-        // printf("BRANCH");
-    }
 }
