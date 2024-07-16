@@ -1,5 +1,11 @@
 #include "spimcore.h"
 
+/*
+    CDA3103C - Summer 24 - MySPIM Project 
+
+    Developed by: Benedetto Falin, Matthew Eisenberg, Kayla Pham, and Zachary Watford.
+*/
+
 //Main Op-Code & Instruction Comparison Definitons:
     // J-Type Instructions
     #define JUMP 2          // Jump
