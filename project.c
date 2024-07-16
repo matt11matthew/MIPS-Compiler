@@ -477,23 +477,27 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
 // 4. Return 1 if a halt condition occurs; otherwise, return 0.
 int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, unsigned *memdata, unsigned *Mem) {
 
-    //Check if ALUresult is properly alligned (halt condition)
-    if (ALUresult % 4 == 0) {
+    //Check if Reading Memory
+    if (MemRead == 1) {
 
-        //Check if Reading Memory
-        if (MemRead == 1) {
+        //Check if ALUresult is properly alligned (halt condition)
+        if (ALUresult % 4 != 0) //Improper address - halt
+            return 1;
+
+        else //Proper address - do not halt
             *memdata = Mem[ALUresult >> 2];
-        }
-
-        //Check if Writing Memory
-        if (MemWrite == 1) {
-            Mem[ALUresult >> 2] = data2;
-        }
     }
 
-    //ALUresult is not properly alligned - HALT
-    else
-        return 1;
+    //Check if Writing Memory
+    if (MemWrite == 1) {
+
+        //Check if ALUresult is properly alligned (halt condition)
+        if (ALUresult % 4 != 0) //Improper address - halt
+            return 1;
+
+        else //Proper address - do not halt
+            Mem[ALUresult >> 2] = data2;
+    }
 
     //Final return - did not halt
     return 0;
