@@ -22,22 +22,6 @@
     #define  ALU_SLT 42     //Set Less Than Signed
     #define  ALU_SLTU 43    //Set Less Than Signed
 
-int isValidOpCode(int input) {
-    switch (input) {
-        case 0: // R-Type
-        case ADDI:
-        case SLTI:
-        case SLTIU:
-        case LUI:
-        case JUMP:
-        case BEQ:
-        case LW:
-        case SW:
-            return 1;
-    }
-    return 0;
-}
-
 // ALU 
 // 10 Points    -------------------------------------------------------------------------
 
@@ -107,7 +91,7 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
 int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
     //FIGURE OUT A WAY TO DETECT BAD INSTRUCTIONS!!!
 
-    /*
+    
     //Check if instruction/word has proper allignment (halt condition)
     if (PC % 4 == 0) {
         //Properly alligned - write / do not halt
@@ -119,18 +103,6 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
     else
         //Not properly alligned - halt
         return 1;
-
-    */
-
-    int var = Mem[(PC >> 2)];
-
-    int opCode = (0xFC000000 & var) >> 26;
-
-    if (!isValidOpCode(opCode)) { //Checks for invalid instruction
-        return 1;
-    }
-    *instruction = Mem[(PC >> 2)]; //Load instructions
-    return 0; //DONT HALT
 }
 
 //CREDIT for bitwise operations: https://www.rapidtables.com/convert/number/hex-to-binary.html
@@ -141,79 +113,27 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
 // 2. Read line 41 to 47 of spimcore.c for more information.
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec) {
 
-    /*
     //Assigning Op-code
     *op = (0xFC000000 & instruction) >> 26; //0xFC000000 =  11111100000000000000000000000000 (bits 31-26)
 
+    //Assigning r1
     *r1 = (0x3E00000 & instruction) >> 21;  //0x3E00000 =   00000011111000000000000000000000 (bits 25-21)
 
+    //Assigning r2
     *r2 = (0x1F0000 & instruction) >> 16;   //0x1F0000 =    00000000000111110000000000000000 (bits 20-16)
 
+    //Assigning r3
     *r3 = (0xF800 & instruction) >> 11;     //0xF800 =      00000000000000001111100000000000 (bits 15-11)
 
+    //Assigning funct
     *funct = (0x3F & instruction);          //0x3F =        00000000000000000000000000111111 (bits 5-0)
 
+    //Assigning offset
     *offset = (0xFFFF & instruction);       //0x7C0 =       00000000000000001111111111111111 (bits 15 - 0)
 
+    //Assigning jsec
     *jsec = (0x03ffffff & instruction);     //0x03ffffff =  00000011111111111111111111111111 (bits 25-0)
-                                                            
-    */
-
-    //printf("INSTRUCTION: %d\n", instruction);
-    //111111 = 63
-    int decOpCode = (0xFC000000 & instruction) >> 26;
-    *op = decOpCode;
-
-    // RS: Source Register
-    // RT: Target Register
-    // RD: Destination Register
-    // shamt:  Shift amount
-    // func: Function code
-
-    if (decOpCode == 0) {
-        //R-Type Since OP CODE is 0 {
-        int rs = (0x3E00000 & instruction) >> 21; //Performing bit masking and shifting 21 bits
-        int rt = (0x1F0000 & instruction) >> 16; //Performing bit masking and shifting 16 bits`
-        //             OP CODE RS     RT   RD   SHAMT  FUNCT
-        //BASE MASKING 000000 00000 00000 00000 00000 010000
-        //             000000 00000 00000 00000 00000 111111
-
-        //add $10, $8, $9		r10 = r8 + r9 = 4
-        //SHIFT BY 11111
-
-        int rd = (0xF800 & instruction) >> 11;
-        int shamt = (0x7C0 & instruction) >> 6; // 0x7C0 = 00000000000000000000011111000000
-        int func = (0x3F & instruction);
-
-        //0x7C0 SHMT
-
-        *r1 = rs;
-        *r2 = rt;
-        *r3 = rd;
-        *funct = func;
-        *offset = shamt; //TODO: CHANGE?
-    } 
-
-    else if (decOpCode == 3 || decOpCode == 2) {
-        //J-Type
-        // printf("JSEC TEST %d\n",  instruction & 0x03ffffff);
- //10000000 JUMPING TO
-        *jsec = instruction & 0x03ffffff;
-        //000100 01010 01011 11111 11111111101 LABEL IT SHOULD GO TO
-        // *jsec = instruction << 6; //UNSURE IF THIS WORKS
-    }
-
-    //Remaining - Handling I-Type
-    else {
-
-        int rs = (0x3E00000 & instruction) >> 21; //Performing bit masking and shifting 21 bits
-        int rt = (0x1F0000 & instruction) >> 16; //Performing bit masking and shifting 16 bits
-        int immediate = (0xFFFF & instruction); //Performing bit masking s
-
-        *r1 = rs;
-        *r2 = rt;
-        *offset = immediate;
-    }
+                                                        
 }
 
 
@@ -222,19 +142,6 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, uns
 
 // 1. Decode the instruction using the opcode (op).
 // 2. Assign the values of the control signals to the variables in the structure controls
-
-// void printALU(struct_controls *controls) {
-//     printf("ALUOp: %d\n", controls->ALUOp);
-//     printf("Jump: %d\n", controls->Jump);
-//     printf("Branch: %d\n", controls->Branch);
-//     printf("MemRead: %d\n", controls->MemRead);
-//     printf("MemWrite: %d\n", controls->MemWrite);
-//     printf("MemtoReg: %d\n", controls->MemtoReg);
-//     printf("RegDst: %d\n", controls->RegDst);
-//     printf("RegWrite: %d\n", controls->RegWrite);
-//     printf("ALUSrc: %d\n", controls->ALUSrc);
-// }
-
 int instruction_decode(unsigned op, struct_controls *controls) {
     
     switch (op) {
@@ -570,8 +477,9 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1)
-        *PC = ((jsec << 2) | (*PC & 0xF0000000));
+        *PC = ((jsec << 2) | (*PC & 0xF0000000)); //Grabbing first 4 digits of PC
 
+    //Branch Statement Handling
     if (Branch == 1 && Zero == 1)
         *PC += extended_value << 2;
 }
