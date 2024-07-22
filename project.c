@@ -111,7 +111,7 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction) {
         return 1;
 }
 
-//CREDIT for bitwise operations: https://www.rapidtables.com/convert/number/hex-to-binary.html
+//CREDIT for binary to hex conversion: https://www.rapidtables.com/convert/number/hex-to-binary.html
 // Instruction Partition
 // 10 Points    -------------------------------------------------------------------------
 
@@ -142,7 +142,6 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, uns
                                                         
 }
 
-
 // instruction decode
 // 15 Points    -------------------------------------------------------------------------
 
@@ -150,6 +149,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, uns
 // 2. Assign the values of the control signals to the variables in the structure controls
 int instruction_decode(unsigned op, struct_controls *controls) {
     
+    //Checking all possible op-codes for implemented operations
     switch (op) {
         case 0: //Op-code: 000 000
             //Always R-Type Instruction
@@ -288,7 +288,11 @@ int instruction_decode(unsigned op, struct_controls *controls) {
 
 // 1. Read the registers addressed by r1 and r2 from Reg, and write the read values to data1 and data2 respectively
 void read_register(unsigned r1, unsigned r2, unsigned *Reg, unsigned *data1, unsigned *data2) {
+
+    //Data at address r1 in Reg written to data1
     *data1 = Reg[r1];
+
+    //Data at address r2 in Reg written to data2
     *data2 = Reg[r2];
 }
 
@@ -303,14 +307,11 @@ void sign_extend(unsigned offset, unsigned *extended_value) {
 
     //Handling negative
     if (negative_check == 1)
-        *extended_value = offset | 0xFFFF0000; //Extending with all 1s
+        *extended_value = offset | 0xFFFF0000; //Extending with all 1s 11111111111111110000000000000000
 
     else
-        *extended_value = offset & 0x0000FFFF; //Extending with all 0s
+        *extended_value = offset & 0x0000FFFF; //Extending with all 0s 00000000000000001111111111111111
 
-    /*
-     *Tested.
-     */
 }
 
 // ALU operations 
@@ -323,14 +324,10 @@ void sign_extend(unsigned offset, unsigned *extended_value) {
 // 5. Return 1 if a halt condition occurs; otherwise, return 0.
 int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsigned funct, char ALUOp, char ALUSrc, unsigned *ALUresult, char *Zero) {
     
-    //Handling extended value for src
-    if (ALUSrc == 1)
-        data2 = extended_value;
-
-    //Check R-Types for Funct for ALU operation
+    //Check R-Types for Funct for ALU operation 
     if (ALUOp == 7) {
-        //Always R-Type
 
+        //Always R-Type
         switch (funct) {
             //Case of Addition
             case ALU_ADD:
@@ -370,9 +367,12 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
             //HALT - Not Valid Signal
             default:
                 return 1;
-
         }
     }
+
+    //Handling extended value for src for BEQ
+    if (ALUSrc == 1)
+        data2 = extended_value;
 
     //Send data and instructions to ALU for processing
     ALU(data1, data2, ALUOp, ALUresult, Zero);
@@ -483,9 +483,9 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
 
     //Jump Statement Handling
     if (Jump == 1)
-        *PC = ((jsec << 2) | (*PC & 0xF0000000)); //Grabbing first 4 digits of PC
+        *PC = ((jsec << 2) | (*PC & 0xF0000000)); //Grabbing first 4 digits of PC 11110000000000000000000000000000
 
-    //Branch Statement Handling
+    //Branch Statement Handling - Adding extended value / 4 for addressing
     if (Branch == 1 && Zero == 1)
         *PC += extended_value << 2;
 }
